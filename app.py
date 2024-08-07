@@ -1,4 +1,5 @@
-from flask import Flask, request
+import os
+from flask import Flask, request, jsonify
 from flask_restful import Resource, Api
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -25,7 +26,7 @@ def get_images_from_google(search_query, num_images):
     search_box.send_keys(search_query)
     search_box.submit()
 
-    wait = WebDriverWait(driver, 1)
+    wait = WebDriverWait(driver, 10)
     try:
         wait.until(EC.presence_of_element_located((By.CLASS_NAME, "s6JM6d")))
         driver.execute_script("""
@@ -74,7 +75,7 @@ class Scrape(Resource):
 
         try:
             image_urls = get_images_from_google(query, 5)
-            return image_urls
+            return jsonify(image_urls)
         except Exception as e:
             print(f"Error: {e}")
             return {'error': 'Internal Server Error'}, 500
@@ -82,4 +83,6 @@ class Scrape(Resource):
 api.add_resource(Scrape, '/scrape')
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=True, host='0.0.0.0', port=port)
+
