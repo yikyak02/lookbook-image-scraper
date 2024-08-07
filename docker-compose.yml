@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  selenium-chrome:
+    image: selenium/standalone-chrome:3.141.59
+    ports:
+      - "4444:4444"
+  flask-app:
+    build: .
+    ports:
+      - "5001:5000"
+    depends_on:
+      - selenium-chrome
