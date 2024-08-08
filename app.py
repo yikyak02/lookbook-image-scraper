@@ -10,6 +10,8 @@ from selenium.webdriver.support import expected_conditions as EC
 app = Flask(__name__)
 api = Api(app)
 
+SELENIUM_URL = os.getenv('SELENIUM_URL', 'http://selenium-chrome:4444/wd/hub')
+
 def get_images_from_google(search_query, num_images):
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument("--headless")
@@ -18,7 +20,7 @@ def get_images_from_google(search_query, num_images):
 
     try:
         driver = webdriver.Remote(
-            command_executor='http://selenium-chrome:4444/wd/hub',
+            command_executor=SELENIUM_URL,
             options=chrome_options
         )
 
@@ -71,33 +73,6 @@ def get_images_from_google(search_query, num_images):
         print(f"Error initializing WebDriver: {e}")
         traceback.print_exc()
         return []
-
-
-    urls = set()
-    num_collected = 0
-
-    while num_collected < num_images:
-        for i in range(len(thumbnails)):
-            if num_collected >= num_images:
-                break
-            try:
-                thumbnail = thumbnails[i]
-                driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", thumbnail)
-                WebDriverWait(driver, 1).until(EC.element_to_be_clickable(thumbnail))
-                thumbnail.click()
-                full_image = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "img.sFlh5c.pT0Scc.iPVvYb")))
-                src = full_image.get_attribute("src")
-                if src and "http" in src:
-                    if src not in urls:
-                        urls.add(src)
-                        num_collected += 1
-                driver.find_element(By.TAG_NAME, "body").click()
-                thumbnails = wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "YQ4gaf")))
-            except Exception as e:
-                print(f"Error clicking thumbnail: {e}")
-                continue
-    driver.quit()
-    return list(urls)
 
 class Scrape(Resource):
     def get(self):
