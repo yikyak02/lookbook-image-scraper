@@ -1,14 +1,12 @@
 version: '3.8'
 services:
   selenium-chrome:
-    image: selenium/standalone-chrome:3.141.59
+    image: selenium/standalone-chrome:4.0.0
     ports:
       - "4444:4444"
   flask-app:
     build: .
     ports:
-      - "5000:5000"
+      - "5001:5000"
     depends_on:
       - selenium-chrome
-    links:
-      - selenium-chrome:selenium-chrome  # This line adds the container linking
