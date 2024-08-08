@@ -1,6 +1,6 @@
 import os
 import traceback
-from flask import Flask, request, jsonify, render_template_string
+from flask import Flask, request, jsonify
 from flask_restful import Resource, Api
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -10,17 +10,16 @@ from selenium.webdriver.support import expected_conditions as EC
 app = Flask(__name__)
 api = Api(app)
 
-SELENIUM_URL = os.getenv('SELENIUM_URL', 'http://selenium-chrome:4444/wd/hub')
-
 def get_images_from_google(search_query, num_images):
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
 
+    # Connect to the Selenium server running in the Docker container
     try:
         driver = webdriver.Remote(
-            command_executor=SELENIUM_URL,
+            command_executor='http://selenium-chrome:4444/wd/hub',
             options=chrome_options
         )
 
@@ -85,13 +84,14 @@ class Scrape(Resource):
             return jsonify(image_urls)
         except Exception as e:
             print(f"Error: {e}")
+            traceback.print_exc()
             return {'error': 'Internal Server Error'}, 500
-
-api.add_resource(Scrape, '/scrape')
 
 @app.route('/')
 def home():
-    return render_template_string("<h1>This is the image scraper</h1>")
+    return "<html><body><h1>This is the image scraper</h1></body></html>"
+
+api.add_resource(Scrape, '/scrape')
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
