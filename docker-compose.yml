@@ -7,6 +7,6 @@ services:
   flask-app:
     build: .
     ports:
-      - "5000:5000"  # Changed from "5001:5000" to "5000:5000"
+      - "5001:5000"  # Changed from "5001:5000" to "5000:5000"
     depends_on:
       - selenium-chrome

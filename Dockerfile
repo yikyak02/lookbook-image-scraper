@@ -7,11 +7,19 @@ WORKDIR /app
 # Copy the current directory contents into the container at /app
 COPY . /app
 
-# Install any needed packages specified in requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+# Create a virtual environment
+RUN python -m venv /venv
+
+# Activate the virtual environment and install the dependencies
+RUN /venv/bin/pip install --no-cache-dir -r requirements.txt
+
+# Set the environment variable for Flask
+ENV FLASK_APP=app.py
 
 # Make port 5000 available to the world outside this container
 EXPOSE 5000
 
-# Run Gunicorn to serve the Flask app
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+# Use the virtual environment to run the app
+CMD ["/venv/bin/python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5000"]
+
+
