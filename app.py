@@ -16,10 +16,13 @@ def get_images_from_google(search_query, num_images):
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
 
+    # Use the environment variable to connect to Selenium server
+    selenium_url = os.environ.get('SELENIUM_URL')
+
     # Connect to the Selenium server running in the Docker container
     try:
         driver = webdriver.Remote(
-            command_executor='http://selenium-chrome:4444/wd/hub',
+            command_executor=selenium_url,
             options=chrome_options
         )
 
