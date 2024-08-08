@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template_string
 from flask_restful import Resource, Api
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -26,7 +26,7 @@ def get_images_from_google(search_query, num_images):
     search_box.send_keys(search_query)
     search_box.submit()
 
-    wait = WebDriverWait(driver, 1)
+    wait = WebDriverWait(driver, 10)
     try:
         wait.until(EC.presence_of_element_located((By.CLASS_NAME, "s6JM6d")))
         driver.execute_script("""
@@ -82,7 +82,10 @@ class Scrape(Resource):
 
 api.add_resource(Scrape, '/scrape')
 
+@app.route('/')
+def home():
+    return render_template_string("<h1>This is the image scraper</h1>")
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=True, host='0.0.0.0', port=port)
-
