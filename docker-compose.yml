@@ -4,8 +4,6 @@ services:
     image: selenium/standalone-chrome:4.0.0
     ports:
       - "4444:4444"
-    networks:
-      - app-network
 
   flask-app:
     build: .
@@ -13,9 +11,4 @@ services:
       - "5001:5000"
     depends_on:
       - selenium-chrome
-    networks:
-      - app-network
 
-networks:
-  app-network:
-    driver: bridge
