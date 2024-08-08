@@ -10,5 +10,5 @@ services:
       - "5000:5000"
     depends_on:
       - selenium-chrome
-    environment:
-      - SELENIUM_URL=http://selenium-chrome:4444/wd/hub
+    links:
+      - selenium-chrome:selenium-chrome  # This line adds the container linking
