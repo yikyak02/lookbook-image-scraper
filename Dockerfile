@@ -21,4 +21,3 @@ EXPOSE 5000
 
 # Use the virtual environment to run the app
 CMD ["/venv/bin/python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5000"]
-
