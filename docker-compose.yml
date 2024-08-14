@@ -4,16 +4,10 @@ services:
     image: selenium/standalone-chrome:4.0.0
     ports:
       - "4444:4444"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:4444"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-  
+
   flask-app:
     build: .
     ports:
       - "5001:5000"
     depends_on:
-      selenium-chrome:
-        condition: service_healthy
+      - selenium-chrome

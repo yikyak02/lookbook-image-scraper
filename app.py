@@ -31,7 +31,7 @@ def get_images_from_google(search_query, num_images, max_retries=5, retry_delay=
             search_box.send_keys(search_query)
             search_box.submit()
 
-            wait = WebDriverWait(driver, 5)
+            wait = WebDriverWait(driver, 1)
             try:
                 wait.until(EC.presence_of_element_located((By.CLASS_NAME, "s6JM6d")))
                 driver.execute_script("""
